@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>购物车</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+        .header {
+            background-color: #007BFF;
+            color: white;
+            padding: 20px;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 20px auto;
+            background-color: #fff;
+            padding: 20px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .total {
+            text-align: right;
+            padding: 10px;
+            font-size: 1.2em;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 10px;
+            cursor: pointer;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>购物车</h1>
+    </div>
+    <div class="container">
+        <table>
+            <thead>
+                <tr>
+                    <th>商品名称</th>
+                    <th>价格</th>
+                    <th>数量</th>
+                    <th>总价</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+            <tbody id="cart-items">
+                <!-- 动态生成购物车商品 -->
+            </tbody>
+        </table>
+        <div class="total" id="total-price">总价: ¥0</div>
+        <a href="index.html" class="button">继续购物</a>
+    </div>
+    <script>
+        function loadCart() {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            let cartItems = document.getElementById('cart-items');
+            let totalPrice = 0;
+
+            cartItems.innerHTML = '';
+
+            cart.forEach(item => {
+                let itemTotal = item.price * item.quantity;
+                totalPrice += itemTotal;
+                cartItems.innerHTML += `
+                    <tr>
+                        <td>${item.name}</td>
+                        <td>¥${item.price}</td>
+                        <td>${item.quantity}</td>
+                        <td>¥${itemTotal}</td>
+                        <td><button class="button" onclick="removeFromCart('${item.name}')">移除</button></td>
+                    </tr>
+                `;
+            });
+
+            document.getElementById('total-price').innerText = '总价: ¥' + totalPrice;
+        }
+
+        function removeFromCart(name) {
+            let cart = JSON.parse(localStorage.getItem('cart')) || [];
+            cart = cart.filter(item => item.name !== name);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            loadCart();
+        }
+
+        window.onload = loadCart;
+    </script>
+</body>
+</html>
